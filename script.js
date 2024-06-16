@@ -1,5 +1,5 @@
 // apikey from newsapi.org
-const apiKey = "bed3731555364633b602ace850382225";
+const apiKey = "4ee2d2a53beb4952a681a1ae7bf21778";
 
 const blogContainer = document.getElementById("blog-container");
 
