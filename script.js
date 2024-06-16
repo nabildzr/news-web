@@ -7,7 +7,7 @@ const blogContainer = document.getElementById("blog-container");
 
 async function fetchRandomNews() {
   try {
-    const apiUrl = `https://newsapi.org/v2/everything?q=design&from=2024-05-15&sortBy=publishedAt&apiKey=${apiKey}`;
+    const apiUrl = `https://newsapi.org/v2/everything?q=apple&from=2024-06-15&to=2024-06-15&sortBy=popularity&apiKey=${apiKey}`;
     const response = await fetch(apiUrl);
     const data = await response.json();
     return data.articles;
