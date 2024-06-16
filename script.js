@@ -1,30 +1,70 @@
 // apikey from newsapi.org
-const apiKey = "bed3731555364633b602ace850382225";
+const apiKey = "pub_4648519815895da192c80657fcb2841759aef";
 
 const blogContainer = document.getElementById("blog-container");
+
+const searchField = document.getElementById("search-input");
+const searchButton = document.getElementById("search-button");
+
 
 
 
 async function fetchRandomNews() {
   try {
-    const apiUrl = `https://newsapi.org/v2/everything?q=design&from=2024-05-15&sortBy=publishedAt&apiKey=${apiKey}`;
+    const apiUrl = `https://newsdata.io/api/1/latest?country=id&category=technology&apikey=${apiKey}`;
     const response = await fetch(apiUrl);
     const data = await response.json();
-    return data.articles;
+    return data.results;
   } catch (error) {
-    console.error("Error Fetching Random News", error);
+    console.error("Error Fetching", error);
     return [];
   }
 }
 
-function displayBlogs(articles) {
+searchButton.addEventListener("click", async () => {
+  const query = searchField.value.trim()
+
+  if(query !== ""){
+    try{
+      const results = await fetchNewsQuery(query)
+      displayBlogs(results)
+    }catch(error){
+      console.log("Error search while fetching", error)
+    }
+  }
+})
+
+async function fetchNewsQuery(query){
+  try {
+    const apiUrl = `https://newsdata.io/api/1/latest?country=id&apikey=${apiKey}&q=${query}`;
+    const response = await fetch(apiUrl);
+    const data = await response.json();
+    return data.results;
+  } catch (error) {
+    console.error("Error Fetching", error);
+    return [];
+  }
+
+  // return new Promise(async (resolve, reject) => {
+  //   try{
+  //     const apiUrl = `https://newsdata.io/api/1/news?apikey=${apiKey}&q=${query}`;
+  //     const response = await fetch(apiUrl);
+  //     const data = await response.json();
+  //     resolve(data.results)
+  //   }catch(error){
+  //     reject(error)
+  //   }
+  // })
+}
+
+function displayBlogs(results) {
 
   blogContainer.innerHTML = "";
-  articles.forEach((article) => {
+  results.forEach((article) => {
     const blogCard = document.createElement("div");
     blogCard.classList.add("blog-card");
     const img = document.createElement("img");
-    img.src = article.urlToImage;
+    img.src = article.image_url;
     img.alt = article.title;
 
     // truncate the title if it's too long
@@ -45,52 +85,62 @@ function displayBlogs(articles) {
 
     description.textContent = truncatedDesc;
 
-    // if article img is null then display placeholder image
-    if (article.urlToImage === null) {
-      img.src = "https://via.placeholder.com/150";
-    }
+    // // if article img is null then display placeholder image
+    // if (article.urlToImage === null) {
+    //   img.src = "https://via.placeholder.com/150";
+    // }
 
-    // if article title is null then display "No Title Found"
-    if (article.title === null) {
-      title.textContent = "No Title Found";
-    }
+    // // if article title is null then display "No Title Found"
+    // if (article.title === null) {
+    //   title.textContent = "No Title Found";
+    // }
 
-    // if article description is null then display "No Description Found"
-    if (article.description === null) {
-      description.textContent = "No Description Found";
-    }
+    // // if article description is null then display "No Description Found"
+    // if (article.description === null) {
+    //   description.textContent = "No Description Found";
+    // }
 
    
-    if (article.url === null) {
-      blogCard.style.cursor = "default";
-    }
+    // if (article.url === null) {
+    //   blogCard.style.cursor = "default";
+    // }
 
-    // if article is [Removed] then don't display it
-    if (article.title === "[Removed]") {
-      return;
-    }
+    // // if article is [Removed] then don't display it
+    // if (article.title === "[Removed]") {
+    //   return;
+    // }
 
-    // if article img not fetched then don't display it
-    if (article.urlToImage === null) {
-      return;
-    }
+    // // if article img not fetched then don't display it
+    // if (article.urlToImage === null) {
+    //   return;
+    // }
 
-    // if article img format is .webp then don't display it
-    if (article.urlToImage.includes(".webp")) {
-      return;
-    }
+    // // if article img format is .webp then don't display it
+    // if (article.urlToImage.includes(".webp")) {
+    //   return;
+    // }
 
-    // limit fetch to 5 articles
-    if (blogContainer.childElementCount === 5) {
-      return;
-    }
+    // // limit fetch to 5 articles
+    // if (blogContainer.childElementCount === 5) {
+    //   return;
+    // }
+
+    // // if in the data had status = error then display "No Data Found"
+    // if (article.status === "error") {
+    //   title.textContent = "No Data Found";
+    //   description.textContent = "No Data Found";
+    // }
+
+    // show from search
+
+
 
     // declare the elements
     blogCard.appendChild(img);
     blogCard.appendChild(title);
     blogCard.appendChild(description);
     blogCard.addEventListener("click", () => {
-        window.open(article.url, "_image")
+        window.open(article.link, "_image")
     })
     blogContainer.appendChild(blogCard);
   });
